@@ -106,19 +106,19 @@ RUN gem install jekyll -v $JEKYLL_VERSION -- \
 #
 # Remove dev 
 #
-RUN apk --no-cache del \
-  zlib-dev \
-  build-base \
-  libxml2-dev \
-  imagemagick-dev \
-  readline-dev \
-  libxslt-dev \
-  libffi-dev \
-  yaml-dev \
-  vips-dev \
-  vips-tools \
-  sqlite-dev \
-  cmake
+#RUN apk --no-cache del \
+#  zlib-dev \
+#  build-base \
+#  libxml2-dev \
+#  imagemagick-dev \
+#  readline-dev \
+#  libxslt-dev \
+#  libffi-dev \
+#  yaml-dev \
+#  vips-dev \
+#  vips-tools \
+#  sqlite-dev \
+#  cmake
 
 
 RUN addgroup -Sg 1000 jekyll
