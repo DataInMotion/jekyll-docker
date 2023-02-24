@@ -1,5 +1,6 @@
-FROM <%= @meta.base_image %>
-LABEL maintainer "Jordon Bedwell <jordon@envygeeks.io>"
+FROM ruby:3.1.1-alpine3.15
+LABEL maintainer "Guido Grune <g.grune@datainmotion.com>"
+# based on "Jordon Bedwell <jordon@envygeeks.io>" Dockerfile in envygeeks/jekyll-docker
 COPY copy /
 
 #
@@ -21,10 +22,9 @@ ENV RUBYOPT=-W0
 #
 
 ENV JEKYLL_VAR_DIR=/var/jekyll
-ENV JEKYLL_DOCKER_TAG=<%= @meta.tag %>
-ENV JEKYLL_VERSION=<%= @meta.release?? @meta.release : @meta.tag %>
-ENV JEKYLL_DOCKER_COMMIT=<%= `git rev-parse --verify HEAD`.strip %>
-ENV JEKYLL_DOCKER_NAME=<%= @meta.name %>
+ENV JEKYLL_DOCKER_TAG=latest
+ENV JEKYLL_VERSION=4.2.2
+ENV JEKYLL_DOCKER_NAME=jekyll
 ENV JEKYLL_DATA_DIR=/srv/jekyll
 ENV JEKYLL_BIN=/usr/jekyll/bin
 ENV JEKYLL_ENV=development
@@ -44,15 +44,6 @@ ENV LANGUAGE=en_US
 
 #
 # EnvVars
-# User
-#
-
-<% if @meta.env? %>
-  ENV <%= @meta.env %>
-<% end %>
-
-#
-# EnvVars
 # Main
 #
 
@@ -62,21 +53,11 @@ env DRAFTS=false
 
 #
 # Packages
-# User
-#
-
-<% if @meta.packages? %>
-  RUN apk --no-cache add <%= @meta.packages %>
-<% end %>
-
-#
-# Packages
 # Dev
 #
 
 RUN apk --no-cache add \
   zlib-dev \
-  libffi-dev \
   build-base \
   libxml2-dev \
   imagemagick-dev \
@@ -84,33 +65,23 @@ RUN apk --no-cache add \
   libxslt-dev \
   libffi-dev \
   yaml-dev \
-  zlib-dev \
   vips-dev \
   vips-tools \
   sqlite-dev \
   cmake
 
-#
-# Packages
-# Main
-#
-
 RUN apk --no-cache add \
-  linux-headers \
-  openjdk8-jre \
+  openjdk11-jre \
   less \
   zlib \
   libxml2 \
   readline \
   libxslt \
   libffi \
-  git \
-  nodejs \
   tzdata \
   shadow \
   bash \
   su-exec \
-  npm \
   libressl \
   yarn
 
@@ -129,49 +100,29 @@ RUN unset GEM_HOME && unset GEM_BIN && \
 #
 
 RUN unset GEM_HOME && unset GEM_BIN && yes | gem install --force bundler
-RUN gem install jekyll -v<%= @meta.release?? \
-  @meta.release : @meta.tag %> -- \
+RUN gem install jekyll -v $JEKYLL_VERSION -- \
     --use-system-libraries
-
 #
-# Gems
-# User
+# Remove dev 
 #
+RUN apk --no-cache del \
+  zlib-dev \
+  build-base \
+  libxml2-dev \
+  imagemagick-dev \
+  readline-dev \
+  libxslt-dev \
+  libffi-dev \
+  yaml-dev \
+  vips-dev \
+  vips-tools \
+  sqlite-dev \
+  cmake
 
-<% if @meta.gems? %>
-  # Stops slow Nokogiri!
-  RUN gem install <%=@meta.gems %> -- \
-    --use-system-libraries
-<% end %>
 
 RUN addgroup -Sg 1000 jekyll
 RUN adduser  -Su 1000 -G \
   jekyll jekyll
-
-#
-# Remove development packages on minimal.
-# And on pages.  Gems are unsupported.
-#
-
-<% if @meta.name == "minimal" || @meta.name == "pages" || @meta.tag == "pages" %>
-  RUN apk --no-cache del \
-    linux-headers \
-    openjdk8-jre \
-    zlib-dev \
-    build-base \
-    libxml2-dev \
-    libxslt-dev \
-    readline-dev \
-    imagemagick-dev\
-    libffi-dev \
-    ruby-dev \
-    yaml-dev \
-    zlib-dev \
-    libffi-dev \
-    vips-dev \
-    vips-tools \
-    cmake
-<% end %>
 
 RUN mkdir -p $JEKYLL_VAR_DIR
 RUN mkdir -p $JEKYLL_DATA_DIR
