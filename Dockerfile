@@ -73,6 +73,7 @@ RUN apk --no-cache add \
 RUN apk --no-cache add \
   openjdk11-jre \
   less \
+  git \
   zlib \
   libxml2 \
   readline \
