@@ -1,4 +1,4 @@
-FROM ruby:3.1.1-alpine3.15
+FROM ruby:3.1.6-alpine3.20
 LABEL maintainer "Guido Grune <g.grune@datainmotion.com>"
 # based on "Jordon Bedwell <jordon@envygeeks.io>" Dockerfile in envygeeks/jekyll-docker
 COPY copy /
@@ -71,7 +71,7 @@ RUN apk --no-cache add \
   cmake
 
 RUN apk --no-cache add \
-  openjdk11-jre \
+  openjdk21-jre \
   less \
   git \
   zlib \
