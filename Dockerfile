@@ -74,6 +74,7 @@ RUN apk --no-cache add \
   openjdk21-jre \
   less \
   git \
+  openssh \
   zlib \
   libxml2 \
   readline \
