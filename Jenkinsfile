@@ -1,7 +1,7 @@
 pipeline {
 	environment {
 		NAME = "jekyll"
-		VERSION = "4.2.2"
+		VERSION = "4.4.1"
 		IMAGE = "${NAME}:${VERSION}"
 	}
 	
